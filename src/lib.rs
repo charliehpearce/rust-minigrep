@@ -25,24 +25,13 @@ impl<'a> Config<'a> {
 }
 
 pub fn search<'a>(query: &str, contents: &'a str, case_sensitive:bool) -> Vec<&'a str> {
-    let mut results = Vec::new();
     
     if case_sensitive {
-        for line in contents.lines() {
-            if line.contains(query) {
-                results.push(line);
-            }
-        }
+        contents.lines().filter(|line| line.contains(query)).collect()
     } else {
-        let query_lower = query.to_lowercase();
-        for line in contents.lines() {
-            if line.to_lowercase().contains(&query_lower) {
-                results.push(line);
-            }
-        }
+        let lower_query = query.to_lowercase();
+        contents.lines().filter(|line| line.to_lowercase().contains(&lower_query)).collect()
     }
-
-    return results
 }
 
 pub fn run(config:Config) -> Result<(),Box<dyn Error>> {
@@ -77,7 +66,7 @@ Pick three.";
     #[test]
     
     fn case_insensitive() {
-        let query = "Rust";
+        let query = "RuSt";
         let contents = "\
 Rust:
 safe, fast, productive.
